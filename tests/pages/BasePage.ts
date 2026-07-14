@@ -18,9 +18,6 @@ export class BasePage {
     }
 
     async pressEnterInGlobalSearch() {
-        await Promise.all([
-            this.page.waitForLoadState('domcontentloaded'),
-            this.globalSearchInput.press('Enter')           
-        ]);
+        await this.globalSearchInput.press('Enter')           
     }
 }

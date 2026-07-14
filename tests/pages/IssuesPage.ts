@@ -2,7 +2,6 @@ import { Page, Locator } from '@playwright/test';
 import { BasePage } from './BasePage';
 
 export class IssuesPage extends BasePage {
-
     readonly PAGE_URL = '/projects/redmine/issues';
 
     // OPTIONS
@@ -26,7 +25,6 @@ export class IssuesPage extends BasePage {
     
     constructor(page: Page) {
         super(page);
-
         this.applyBtn = page.locator('.icon-checked', { hasText: 'Apply' });
         this.tableHeaders = page.locator('table.issues thead th');
         this.statusCells = page.locator('table.issues tbody td.status');
@@ -92,22 +90,17 @@ export class IssuesPage extends BasePage {
     }
 
     async clickApply() {
-        await Promise.all([
-            this.page.waitForLoadState('domcontentloaded'),
-            this.applyBtn.click()                          
-        ]);
+        await this.applyBtn.click();  
+        await this.page.waitForURL(`**${this.PAGE_URL}**`);                        
     }
 
     async clickClear() {
-        await Promise.all([
-            this.page.waitForLoadState('domcontentloaded'),
-            this.clearBtn.click()                          
-        ]);
+        await this.clearBtn.click(); 
+        await this.page.waitForURL(`**${this.PAGE_URL}**`);                        
     }
 
     async getFirstIssueSubjectText(): Promise<string> {
-        await this.page.waitForSelector('table.issues tbody tr');
-        const subjectText = await this.page.locator('table.issues tbody tr').first().locator('td.subject a').innerText();
+        const subjectText = await this.firstIssueSubject.innerText();
         return subjectText.trim();
     }
 }

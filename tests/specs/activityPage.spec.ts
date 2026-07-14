@@ -50,16 +50,15 @@ test.describe('Module: Activity / Filters', () => {
 
         await test.step('Step 4: Verify the date group headers displayed in the main activity feed', async () => {
             const actualDateHeaders = await activityPage.getVisibleDateHeaders();
-            if (actualDateHeaders.length > 0) {
-                for (const headerDate of actualDateHeaders) {
-                    expect(allowedDatesInFeed, `ERROR: Found an extra date outside the 3-day window: ${headerDate}`)
-                        .toContain(headerDate);
-                }
-            } else {
-                test.info().annotations.push({
-                    type: 'info',
-                    description: `No activities found in the range [${expectedPeriodText}]. The test passed as this is a valid system state.`
-                });
+            if (actualDateHeaders.length === 0) {
+                await expect(activityPage.noDataMessage, 'ERROR: Feed is empty but "No data" message is missing!')
+                    .toBeVisible();
+                test.skip(true, 'Valid system state: "No data to display" message is shown. Skipping to avoid false positive.');
+                return; 
+            }
+            for (const headerDate of actualDateHeaders) {
+                expect(allowedDatesInFeed, `ERROR: Found an extra date outside the 3-day window: ${headerDate}`)
+                    .toContain(headerDate);
             }
         });
     });

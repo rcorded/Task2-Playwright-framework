@@ -3,14 +3,15 @@ import { BasePage } from './BasePage';
 
 export class RoadmapPage extends BasePage {
     readonly PAGE_URL = '/projects/redmine/roadmap';
-
     readonly applyBtn: Locator;
     readonly relatedIssuesBlocks: Locator;
+    readonly issueLinks: Locator;
 
     constructor(page: Page) {
         super(page);
         this.applyBtn = page.locator('input[value="Apply"]').first();
         this.relatedIssuesBlocks = page.locator('.related-issues');
+        this.issueLinks = page.locator('table.related-issues td.subject a');
     }
 
     getTrackerCheckbox(trackerName: string): Locator {
@@ -27,14 +28,14 @@ export class RoadmapPage extends BasePage {
     }
 
     async clickApply() {
-        await Promise.all([
-            this.page.waitForLoadState('domcontentloaded'),
-            this.applyBtn.click()                          
-        ]);
+        await this.applyBtn.click()  
+        await this.page.waitForURL(`**${this.PAGE_URL}**`);                                     
     }
 
-    async getAllVisibleIssuesText(): Promise<string> {
-        const texts = await this.relatedIssuesBlocks.allInnerTexts();
-        return texts.join(' ');
+    async getVisibleIssueTrackers(): Promise<string[]> {
+        const rawTexts = await this.issueLinks.allInnerTexts();        
+        return rawTexts.map(text => {
+            return text.split(' #')[0].trim();
+        });
     }
 }

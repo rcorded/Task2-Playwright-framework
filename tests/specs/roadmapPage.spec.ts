@@ -21,9 +21,22 @@ test.describe('Module: Roadmap / Filters', () => {
             });
 
             await test.step(`Expected Result 1: The tasks with the corresponding "${tracker}" are no longer displayed in the "Related issues" list`, async () => {
-                const visibleText = await roadmapPage.getAllVisibleIssuesText();
-                expect(visibleText, `ERROR: Tasks with type "${tracker}" are still displayed in the list!`)
+                const visibleTrackers = await roadmapPage.getVisibleIssueTrackers();                
+                expect(visibleTrackers, `ERROR: Tasks with type "${tracker}" are still displayed in the list!`)
                     .not.toContain(tracker);
+            });
+
+            await test.step('Expected Result 2: The tasks with other checked trackers remain visible', async () => {
+                const visibleTrackers = await roadmapPage.getVisibleIssueTrackers();                
+                const expectedTrackers = ROADMAP_FILTER_TRACKERS.filter(t => t !== tracker);                
+                if (visibleTrackers.length === 0) {
+                    test.skip(true, 'No other issues are available to verify remaining trackers.');
+                    return;
+                }
+                for (const actualTracker of visibleTrackers) {
+                    expect(expectedTrackers, `ERROR: Found an unexpected task type: ${actualTracker}`)
+                        .toContain(actualTracker);
+                }
             });
         });
     }

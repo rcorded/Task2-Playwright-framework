@@ -2,7 +2,9 @@ name: Playwright Tests with Allure
 
 on:
   push:
-    branches: [ "main", "task-2-playwright" ] 
+    branches: [ "main", "LUX-1-task2-playwright" ] 
+  pull_request:
+    branches: [ "main", "LUX-1-task2-playwright" ]
 
 permissions:
   contents: write

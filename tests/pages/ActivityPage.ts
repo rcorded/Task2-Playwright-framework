@@ -3,11 +3,11 @@ import { BasePage } from './BasePage';
 
 export class ActivityPage extends BasePage {
     readonly PAGE_URL = '/projects/redmine/activity';
-
     readonly dateInput: Locator;
     readonly applyBtn: Locator;
     readonly periodSubtitle: Locator;
     readonly dateGroupHeaders: Locator;
+    readonly noDataMessage: Locator;
 
     constructor(page: Page) {
         super(page);        
@@ -15,6 +15,7 @@ export class ActivityPage extends BasePage {
         this.applyBtn = page.locator('.sidebar input[type="submit"], input[value="Apply"]');        
         this.periodSubtitle = page.locator('#content > p').first();        
         this.dateGroupHeaders = page.locator('#content h3');
+        this.noDataMessage = this.page.locator('p.nodata');
     }
 
     async selectUpToDate(dateStr: string) {
@@ -24,10 +25,8 @@ export class ActivityPage extends BasePage {
     }
 
     async clickApply() {
-        await Promise.all([
-            this.page.waitForLoadState('domcontentloaded'),
-            this.applyBtn.click()                          
-        ]);
+        await this.applyBtn.click();
+        await this.page.waitForURL(`**${this.PAGE_URL}**`);
     }
 
     async getPeriodSubtitleText(): Promise<string> {

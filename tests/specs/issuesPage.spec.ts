@@ -26,6 +26,7 @@ test.describe('Module: Issues', () => {
 
                 await test.step('Expected Result: Every row in the "Status" column matches the selected <Status>', async () => {
                     const displayedStatuses = await issuesPage.getVisibleStatuses();
+                    expect(displayedStatuses.length,`ERROR: No issues found for status "${status}". The table is empty!`).toBeGreaterThan(0);
                     for (let i = 0; i < displayedStatuses.length; i++) {
                         expect.soft(displayedStatuses[i].trim(), `ERROR: Row ${i + 1} has incorrect status`)
                             .toBe(status);

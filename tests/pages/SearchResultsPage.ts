@@ -3,7 +3,6 @@ import { BasePage } from './BasePage';
 
 export class SearchResultsPage extends BasePage {
     readonly PAGE_URL_REGEX = /.*\/search/;
-
     readonly searchResultsContainer: Locator;
     readonly resultItems: Locator;
 
