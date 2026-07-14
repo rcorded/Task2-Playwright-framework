@@ -1,0 +1,58 @@
+name: Playwright Tests with Allure
+
+on:
+  push:
+    branches: [ "main", "LUX-1-task2-playwright" ] 
+  pull_request:
+    branches: [ "main", "LUX-1-task2-playwright" ]
+
+permissions:
+  contents: write
+
+jobs:
+  test-and-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          npx playwright install --with-deps
+
+      - name: Run tests
+        run: npm run test
+        continue-on-error: true 
+
+      - name: Get Allure history
+        uses: actions/checkout@v4
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages-dir
+
+      - name: Copy history to allure-results
+        if: always()
+        run: |
+          mkdir -p allure-results/history
+          cp -r gh-pages-dir/history/* allure-results/history/ || true
+
+      - name: Generate Allure Report
+        if: always()
+        run: npm run report:generate
+
+      - name: Deploy Allure to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages 
+          publish_dir: allure-report

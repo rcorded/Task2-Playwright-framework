@@ -25,16 +25,16 @@ To set up and run this project, you need to have the following installed on your
 ## Steps to Launch
 You can execute the automated test suite using the pre-configured npm scripts and default commands.
 
-Run tests (Default mode):
+Run tests in Headless mode (Default):
 
 ```Bash
 npm run test
 ```
 
-Run tests in Headless mode:
+Run tests in Headed mode (with browser UI visible):
 
 ```Bash
-npm run test:headless
+npm run test:headed
 ```
 
 Run a specific spec:
